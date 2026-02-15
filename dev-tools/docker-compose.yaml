@@ -1,0 +1,33 @@
+services:
+  ndrivecore-runner:
+    image: ndrivecore-runner
+    build:
+      context: .
+      dockerfile: ../NDriveCore-Runner/Dockerfile
+# To Access alias garage="docker exec -ti dev-tools-garage-1 /garage already added on main machine
+  garage:
+    image: dxflrs/garage:v2.2.0
+    network_mode: "host"
+    restart: unless-stopped
+    ports:
+       - "3900:3900"
+       - "3901:3901"
+       - "3902:3902"
+       - "3903:3903"
+       - "3904:3904"
+    volumes:
+      - ./garage.toml:/etc/garage.toml
+      - /mnt/D-Drive/garage/meta:/var/lib/garage/meta
+      - /mnt/D-Drive/garage/data:/var/lib/garage/data
+
+  db:
+    image: postgres:latest
+    restart: always
+    # set shared memory limit when using docker compose
+    shm_size: 128mb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: 12321
+      POSTGRES_DB: main
