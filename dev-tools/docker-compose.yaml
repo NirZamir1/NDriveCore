@@ -1,0 +1,38 @@
+services:
+# To Access alias garage="docker exec -ti dev-tools-garage-1 /garage already added on main machine
+#to generate garage.toml run "./dev-tools/generate_garage_config.sh"
+  garage:
+    image: dxflrs/garage:v2.2.0
+    restart: unless-stopped
+    ports:
+       - "3900:3900"
+       - "3901:3901"
+       - "3902:3902"
+       - "3903:3903"
+       - "3904:3904"
+    volumes:
+      - ./garage.toml:/etc/garage.toml
+      - /mnt/D-Drive/garage/meta:/var/lib/garage/meta
+      - /mnt/D-Drive/garage/data:/var/lib/garage/data
+
+  garage_ui:
+    image: khairul169/garage-webui:latest
+    volumes:
+      - ./garage.toml:/etc/garage.toml:ro
+    ports:
+      - 3909:3909
+    environment:
+      API_BASE_URL: "http://garage:3903"
+      S3_ENDPOINT_URL: "http://garage:3900"
+
+  db:
+    image: postgres:latest
+    restart: always
+    # set shared memory limit when using docker compose
+    shm_size: 128mb
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: 12321
+      POSTGRES_DB: main
