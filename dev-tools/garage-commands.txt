@@ -1,0 +1,3 @@
+garage layout assign -z dev -c 1G <node-id> // -z zone name, -c available storage
+
+
