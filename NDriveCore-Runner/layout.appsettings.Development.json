@@ -1,0 +1,18 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AWS": {
+    "Garage":
+    {
+      "AuthenticationRegion": "garage",
+      "ServiceURL" : "http://localhost:3900",
+      "AccessKey" : "Access-Key",
+      "AccessKeySecret": "Secret"
+    }
+  }
+}
+

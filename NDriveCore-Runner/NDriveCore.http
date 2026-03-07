@@ -1,6 +1,6 @@
 @NDriveCore_HostAddress = http://localhost:5028
 
-GET {{NDriveCore_HostAddress}}/weatherforecast/
-Accept: application/json
+#GET {{NDriveCore_HostAddress}}/weatherforecast/
+#Accept: application/json
 
 ###

@@ -1,11 +1,21 @@
+using Amazon.Runtime;
+using Amazon.S3;
+using Amazon.S3.Model;
+
 namespace NDriveCore;
 
-public class Program
+public static class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
+
+        if (builder.Environment.IsDevelopment())
+        {
+            builder.Services.ConfigureS3ServicesDevelopment(builder.Configuration);
+        }
+        
         // Add services to the container.
         builder.Services.AddAuthorization();
 
@@ -22,26 +32,24 @@ public class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
-
-        var summaries = new[]
+        
+        var client = app.Services.GetService<IAmazonS3>();
+        if (client == null)
         {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+            throw new InvalidOperationException("Cannot find the IAmazonS3 instance");
+        }
+        ListBucketsResponse response = await client.ListBucketsAsync();
+        foreach (var responseBucket in response.Buckets)
+        {
+            Console.WriteLine(responseBucket.BucketName);
+        }
+    }
 
-        app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                        new WeatherForecast
-                        {
-                            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                            TemperatureC = Random.Shared.Next(-20, 55),
-                            Summary = summaries[Random.Shared.Next(summaries.Length)]
-                        })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast");
-
-        app.Run();
+    private static void ConfigureS3ServicesDevelopment(this IServiceCollection services, IConfiguration configuration)
+    {
+        var options = configuration.GetAWSOptions("AWS:Garage");
+        options.Credentials = new BasicAWSCredentials(configuration["AWS:Garage:AccessKey"], configuration["AWS:Garage:AccessKeySecret"]);
+        services.AddDefaultAWSOptions(options);
+        services.AddAWSService<IAmazonS3>();
     }
 }
