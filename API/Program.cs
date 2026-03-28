@@ -1,6 +1,8 @@
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
+using Microsoft.EntityFrameworkCore;
+using Repository;
 
 namespace NDriveCore;
 
@@ -10,25 +12,16 @@ public static class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-
-        if (builder.Environment.IsDevelopment())
-        {
-            builder.Services.ConfigureS3ServicesDevelopment(builder.Configuration);
-        }
         
-        // Add services to the container.
+        builder.Services.ConfigureS3ServicesDevelopment(builder.Configuration);
+        builder.Services.ConfigureDb(builder.Configuration);
+        
         builder.Services.AddAuthorization();
 
         // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        builder.Services.AddOpenApi();
-
         var app = builder.Build();
-
+        
         // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.MapOpenApi();
-        }
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
@@ -48,8 +41,15 @@ public static class Program
     private static void ConfigureS3ServicesDevelopment(this IServiceCollection services, IConfiguration configuration)
     {
         var options = configuration.GetAWSOptions("AWS:Garage");
-        options.Credentials = new BasicAWSCredentials(configuration["AWS:Garage:AccessKey"], configuration["AWS:Garage:AccessKeySecret"]);
+        options.Credentials = new BasicAWSCredentials(configuration["AWS:Garage:AccessID"], configuration["AWS:Garage:AccessKeySecret"]);
         services.AddDefaultAWSOptions(options);
         services.AddAWSService<IAmazonS3>();
+    }
+
+    private static void ConfigureDb(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseNpgsql(configuration.GetConnectionString("Postgres"), b => b.MigrationsAssembly("Repository"))
+        );
     }
 }

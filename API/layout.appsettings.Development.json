@@ -13,6 +13,10 @@
       "AccessKey" : "Access-Key",
       "AccessKeySecret": "Secret"
     }
+  },
+  "ConnectionStrings":
+  {
+    "Postgres": "Host=myserver;Username=mylogin;Password=mypass;Database=mydatabase"
   }
 }
 
