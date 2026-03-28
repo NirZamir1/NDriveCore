@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using Common.Models;
-using File = Common.Models.File;
+using Common.Models.File;
+using File = Common.Models.File.File;
 
 namespace Repository;
 

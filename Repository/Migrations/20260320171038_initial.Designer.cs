@@ -12,8 +12,8 @@ using Repository;
 namespace Repository.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260314153949_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260320171038_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,7 +25,7 @@ namespace Repository.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.Models.File", b =>
+            modelBuilder.Entity("Common.Models.File.File", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,7 +50,7 @@ namespace Repository.Migrations
                     b.ToTable("File", (string)null);
                 });
 
-            modelBuilder.Entity("Common.Models.FileMetadata", b =>
+            modelBuilder.Entity("Common.Models.File.FileMetadata", b =>
                 {
                     b.Property<Guid>("FileId")
                         .HasColumnType("uuid");
@@ -75,18 +75,18 @@ namespace Repository.Migrations
                     b.UseTptMappingStrategy();
                 });
 
-            modelBuilder.Entity("Common.Models.FileMetadata", b =>
+            modelBuilder.Entity("Common.Models.File.FileMetadata", b =>
                 {
-                    b.HasOne("Common.Models.File", "File")
+                    b.HasOne("Common.Models.File.File", "File")
                         .WithOne("Metadata")
-                        .HasForeignKey("Common.Models.FileMetadata", "FileId")
+                        .HasForeignKey("Common.Models.File.FileMetadata", "FileId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("File");
                 });
 
-            modelBuilder.Entity("Common.Models.File", b =>
+            modelBuilder.Entity("Common.Models.File.File", b =>
                 {
                     b.Navigation("Metadata")
                         .IsRequired();

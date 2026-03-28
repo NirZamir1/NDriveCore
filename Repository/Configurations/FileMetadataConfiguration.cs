@@ -1,4 +1,5 @@
 using Common.Models;
+using Common.Models.File;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -17,6 +18,11 @@ public class FileMetadataConfiguration : IEntityTypeConfiguration<FileMetadata>
         builder.Property(m => m.Name)
             .IsRequired()
             .HasMaxLength(255);
+        
+        builder.Property(f => f.CreatedAt)
+            .IsRequired();
+
+        builder.Property(f => f.UpdatedAt);
 
         builder.Property(m => m.Size).IsRequired();
         

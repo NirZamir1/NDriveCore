@@ -1,7 +1,7 @@
+using Common.Models.File;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Common.Models;
-using File = Common.Models.File;
+using File = Common.Models.File.File;
 
 namespace Repository.Configurations;
 
@@ -20,12 +20,6 @@ public class FileConfiguration : IEntityTypeConfiguration<File>
 
         builder.HasIndex(f => f.StorageKey)
             .IsUnique();
-
-        builder.Property(f => f.CreatedAt)
-            .IsRequired();
-
-        builder.Property(f => f.UpdatedAt)
-            .IsRequired();
 
         builder.HasOne(f => f.Metadata)
             .WithOne(m => m.File)
